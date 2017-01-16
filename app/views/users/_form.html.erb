@@ -1,0 +1,45 @@
+<%= form_for(@user) do |f| %>
+  <% if @user.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
+
+      <ul>
+      <% @user.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+  
+
+ 
+  <div class="field">
+    <p><%= f.label :name %></p>
+    <%= f.text_field :name %>
+  </div>
+  <div class="field">
+    <p><%= f.label :happiness %></p>
+    <%= f.text_field :happiness %>
+  </div>
+ <div class="field">
+    <p><%= f.label :height %></p>
+    <%= f.text_field :height %>
+  </div>
+    <div class="field">
+    <p><%= f.label :tickets %></p>
+    <%= f.text_field :tickets %>
+  </div>
+
+    <div class="field">
+    <p><%= f.label :nausea %></p>
+    <%= f.text_field :nausea %>
+  </div>
+    <div class="field">
+    <%= f.label "are you admin? "  %>
+    <%= f.check_box :admin  %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+
+<% end %>

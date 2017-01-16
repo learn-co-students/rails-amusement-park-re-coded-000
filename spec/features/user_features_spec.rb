@@ -1,5 +1,5 @@
 require_relative "../rails_helper.rb"
-
+require 'pry'
 describe 'Feature Test: User Signup', :type => :feature do
 
   it 'successfully signs up as non-admin' do
@@ -123,6 +123,7 @@ describe 'Feature Test: Go on a Ride', :type => :feature do
   end
 
   it 'has titles of the rides on the attractions index page' do
+    #pry.bind
     click_link('See attractions')
     expect(page).to have_content("#{@ferriswheel.name}")
     expect(page).to have_content("#{@rollercoaster.name}")

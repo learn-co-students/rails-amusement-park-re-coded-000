@@ -1,0 +1,11 @@
+<h1>Acttractions</h1>
+<ul>
+<%= @attractions.map do |attraction| %>
+   <% if current_user.admin %>
+    <li><%=link_to "Show #{attraction.name}" ,attraction%></li>
+    <% else %>
+	<li><%=link_to "Go on #{attraction.name}" ,attraction%></li>
+	<%end%>
+<%end%>
+</ul>
+<li><%=link_to "New Attraction" ,new_attraction_path%>
