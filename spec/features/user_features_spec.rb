@@ -1,83 +1,39 @@
 require_relative "../rails_helper.rb"
-
+require 'pry'
 describe 'Feature Test: User Signup', :type => :feature do
 
   it 'successfully signs up as non-admin' do
-    visit_signup
-    expect(current_path).to eq('/users/new')
     user_signup
-    expect(current_path).to eq('/users/1')
-    expect(page).to have_content("Amy Poehler")
-    expect(page).to have_content("Mood")
-    expect(page).to have_content("happy")
-    expect(page).to have_content("15")
-    expect(page).to have_content("58")
   end
 
   it "on sign up, successfully adds a session hash" do
-    visit_signup
     user_signup
     expect(page.get_rack_session_key('user_id')).to_not be_nil
   end
 
   it 'successfully logs in as non-admin' do
-    visit_signin
-    expect(current_path).to eq('/signin')
     user_login
-    expect(current_path).to eq('/users/1')
-    expect(page).to have_content("Mindy")
-    expect(page).to have_content("Mood")
-    expect(page).to have_content("happy")
-    expect(page).to have_content("10")
-    expect(page).to have_content("50")
   end
 
   it "on log in, successfully adds a session hash" do
-    visit_signin
     user_login
     expect(page.get_rack_session_key('user_id')).to_not be_nil
   end
 
-  it 'prevents user from viewing user show page and redirects to home page if not logged in' do
-    @mindy = User.create(
-      name: "Mindy",
-      password: "password",
-      happiness: 3,
-      nausea: 2,
-      tickets: 10,
-      height: 50
-    )
-    visit '/users/1'
-    expect(current_path).to eq('/')
-    expect(page).to have_content("Sign Up")
-  end
-
   it 'successfully signs up as admin' do
-    visit_signup
-    expect(current_path).to eq('/users/new')
     admin_signup
-    expect(current_path).to eq('/users/1')
-    expect(page).to have_content("Walt Disney")
-    expect(page).to have_content("ADMIN")
   end
 
-  it "on sign up for admin, successfully adds a session hash" do
-    visit_signup
+  it "on sign up for admin, successfully adds a session hash" do 
     admin_signup
     expect(page.get_rack_session_key('user_id')).to_not be_nil
   end
 
   it 'successfully logs in as admin' do
-    visit_signin
-    expect(current_path).to eq('/signin')
     admin_login
-    expect(current_path).to eq('/users/2')
-    expect(page).to have_content("Walt Disney")
-    expect(page).to have_content("ADMIN")
   end
 
   it "on log in, successfully adds a session hash to admins" do
-    visit_signin
     admin_login
     expect(page.get_rack_session_key('user_id')).to_not be_nil
   end
@@ -87,40 +43,34 @@ end
 describe 'Feature Test: User Signout', :type => :feature do
 
   it 'has a link to log out from the users/show page' do
-    visit_signup
     user_signup
     expect(page).to have_content("Log Out")
   end
 
   it 'redirects to home page after logging out' do
-    visit_signup
     user_signup
     click_link("Log Out")
     expect(current_path).to eq('/')
   end
 
   it "successfully destroys session hash when 'Log Out' is clicked" do
-    visit_signup
     user_signup
     click_link("Log Out")
     expect(page.get_rack_session).to_not include("user_id")
   end
 
   it 'has a link to log out from the users/show page when user is an admin' do
-    visit_signup
     admin_signup
     expect(page).to have_content("Log Out")
   end
 
   it 'redirects to home page after admin logs out when user is an admin' do
-    visit_signup
     admin_signup
     click_link("Log Out")
     expect(current_path).to eq('/')
   end
 
   it "successfully destroys session hash when 'Log Out' is clicked as admin" do
-    visit_signup
     admin_signup
     click_link("Log Out")
     expect(page.get_rack_session).to_not include("user_id")
@@ -129,7 +79,7 @@ end
 
 describe 'Feature Test: Go on a Ride', :type => :feature do
 
-  before :each do
+  before :each do 
     @rollercoaster = Attraction.create(
       :name => "Roller Coaster",
       :tickets => 5,
@@ -151,7 +101,6 @@ describe 'Feature Test: Go on a Ride', :type => :feature do
       :happiness_rating => 1,
       :min_height => 28
     )
-    visit_signup
     user_signup
   end
 
@@ -174,6 +123,7 @@ describe 'Feature Test: Go on a Ride', :type => :feature do
   end
 
   it 'has titles of the rides on the attractions index page' do
+    #pry.bind
     click_link('See attractions')
     expect(page).to have_content("#{@ferriswheel.name}")
     expect(page).to have_content("#{@rollercoaster.name}")
@@ -205,35 +155,35 @@ describe 'Feature Test: Go on a Ride', :type => :feature do
     expect(page).to have_button("Go on this ride")
   end
 
-  it "clicking on 'Go on this ride' redirects to user show page" do
+  it "clicking on 'Go on ride' redirects to user show page" do
     click_link('See attractions')
     click_link("Go on #{@ferriswheel.name}")
     click_button("Go on this ride")
     expect(current_path).to eq("/users/1")
   end
 
-  it "clicking on 'Go on this ride' updates the users ticket number" do
+  it "clicking on 'Go on ride' updates the users ticket number" do
     click_link('See attractions')
     click_link("Go on #{@ferriswheel.name}")
     click_button("Go on this ride")
     expect(page).to have_content("Tickets: 13")
   end
 
-  it "clicking on 'Go on this ride' updates the users mood" do
+  it "clicking on 'Go on ride' updates the users mood" do
     click_link('See attractions')
     click_link("Go on #{@teacups.name}")
     click_button("Go on this ride")
     expect(page).to have_content("sad")
   end
 
-  it "when the user is tall enough and has enough tickets, clicking on 'Go on this ride' displays a thank you message" do
+  it "when the user is tall enough and has enough tickets, clicking on 'Go on ride' displays a thank you message" do
     click_link('See attractions')
     click_link("Go on #{@ferriswheel.name}")
     click_button("Go on this ride")
     expect(page).to have_content("Thanks for riding the #{@ferriswheel.name}!")
   end
 
-  it "when the user is too short, clicking on 'Go on this ride' displays a sorry message" do
+  it "when the user is too short, clicking on 'Go on ride' displays a sorry message" do
     @user = User.find_by(:name => "Amy Poehler")
     @user.update(:height => 10)
     click_link('See attractions')
@@ -243,31 +193,31 @@ describe 'Feature Test: Go on a Ride', :type => :feature do
     expect(page).to have_content("happy")
   end
 
-  it "when the user doesn't have enough tickets, clicking on 'Go on this ride' displays a sorry message" do
+  it "when the user doesn't have enough tickets, clicking on 'Go on ride' displays a sorry message" do
     @user = User.find_by(:name => "Amy Poehler")
     @user.update(:tickets => 1)
     click_link('See attractions')
     click_link("Go on #{@ferriswheel.name}")
     click_button("Go on this ride")
-    expect(page).to have_content("You do not have enough tickets to ride the #{@ferriswheel.name}")
+    expect(page).to have_content("You do not have enough tickets the #{@ferriswheel.name}")
     expect(page).to have_content("Tickets: 1")
   end
 
-  it "when the user is too short and doesn't have enough tickets, clicking on 'Go on this ride' displays a detailed sorry message" do
+  it "when the user is too short and doesn't have enough tickets, clicking on 'Go on ride' displays a detailed sorry message" do
     @user = User.find_by(:name => "Amy Poehler")
     @user.update(:tickets => 1, :height => 30)
     click_link('See attractions')
     click_link("Go on #{@rollercoaster.name}")
     click_button("Go on this ride")
     expect(page).to have_content("You are not tall enough to ride the #{@rollercoaster.name}")
-    expect(page).to have_content("You do not have enough tickets to ride the #{@rollercoaster.name}")
+    expect(page).to have_content("You do not have enough tickets the #{@rollercoaster.name}")
     expect(page).to have_content("Tickets: 1")
   end
 end
 
 describe 'Feature Test: Admin Flow', :type => :feature do
 
-  before :each do
+  before :each do 
     @rollercoaster = Attraction.create(
       :name => "Roller Coaster",
       :tickets => 5,
@@ -289,7 +239,6 @@ describe 'Feature Test: Admin Flow', :type => :feature do
       :happiness_rating => 1,
       :min_height => 28
     )
-    visit_signup
     admin_signup
   end
 
